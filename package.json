@@ -1,0 +1,15 @@
+{
+  "name": "discord-account-generator",
+  "version": "1.0.0",
+  "description": "Generates Discord Accounts",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "run": "node index.js"
+  },
+  "author": "Dan",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^9.0.0"
+  }
+}
