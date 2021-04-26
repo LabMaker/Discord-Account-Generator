@@ -20,7 +20,7 @@ import puppeteer from "puppeteer";
   }
   await discordPage.goto("https://discord.com/register");
 
-  const username = "MontyCarlo";
+  const username = "MontyCarloa";
   const password = "xVeR2567@3!";
   const emailSelector = `input[name="email"]`;
   const usernameSelector = `input[name="username"]`;
