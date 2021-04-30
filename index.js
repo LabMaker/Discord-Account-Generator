@@ -27,6 +27,7 @@ import puppeteer from "puppeteer";
   const passwordSelector = `input[name="password"]`;
   const checkBoxSelector = `input[type="checkbox"]`;
   const submitbutton = `button[type="submit"]`;
+  const verifybutton = `table[role="presentation"]`;
 
   await discordPage.type(emailSelector, email);
   await discordPage.type(usernameSelector, username);
@@ -49,10 +50,56 @@ import puppeteer from "puppeteer";
   }
 
   console.log("Email Is Valid");
-  await emailPage.click(".mail-item-sub");
+  await emailPage.click("div.mail-item-sub");
+  console.log("Clicked Email");
+  setTimeout(async () => {
+    // await emailPage.evaluate(() => {
+    //   let iframe = document.getElementById("fullmessage");
+    //   let doc = iframe.contentDocument;
+    //   let ele = doc.querySelector("you-selector");
+    //   const links = doc. page.$$("a");
+    // });
+    const iframe = emailPage
+      .frames()
+      .find((frame) => frame.name().includes("Verify Email"));
+    findByLink(iframe, "Verify Email");
+  }, 5000);
+  console.log("Ran 2");
 
-  let x = await emailPage.$eval(".mail-message");
-  console.log(x);
+  /*const aTags = await emailPage.$$("a");
+  for (const aTag of aTags) {
+    console.log(aTag.val);
+  } */
 
   //await browser.close();
 })();
+
+// Normalizing the text
+function getText(linkText) {
+  linkText = linkText.replace(/\r\n|\r/g, "\n");
+  linkText = linkText.replace(/\ +/g, " ");
+
+  // Replace &nbsp; with a space
+  var nbspPattern = new RegExp(String.fromCharCode(160), "g");
+  return linkText.replace(nbspPattern, " ");
+}
+
+// find the link, by going over all links on the page
+async function findByLink(page, linkString) {
+  const links = await page.$$("a");
+  for (var i = 0; i < links.length; i++) {
+    let valueHandle = await links[i].getProperty("innerText");
+    let linkText = await valueHandle.jsonValue();
+    console.log(linkText);
+    const text = getText(linkText);
+    if (linkString == text) {
+      console.log(linkString);
+      console.log(text);
+      console.log("Found");
+      links[i].click();
+      return links[i];
+    }
+  }
+  console.log("Could not Find");
+  return null;
+}
