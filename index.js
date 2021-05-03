@@ -1,5 +1,4 @@
 import puppeteer from "puppeteer";
-
 (async () => {
   const browser = await puppeteer.launch({
     headless: false,
@@ -43,28 +42,23 @@ import puppeteer from "puppeteer";
 
   //await discordPage.type(".css-1hwfws3", "12");
 
-  let emailTitle = "";
+  var options = {
+    method: "GET",
+    url: "https://privatix-temp-mail-v1.p.rapidapi.com/request/domains/",
+    headers: {
+      "x-rapidapi-key": "6d364a7ed4mshec386a046bdf66cp1052f0jsnd25562d4a438",
+      "x-rapidapi-host": "privatix-temp-mail-v1.p.rapidapi.com",
+    },
+  };
 
-  while (emailTitle != "Verify Email Address for Discord") {
-    emailTitle = await emailPage.$eval(".mail-item-sub", (el) => el.innerText);
-  }
-
-  console.log("Email Is Valid");
-  await emailPage.click("div.mail-item-sub");
-  console.log("Clicked Email");
-  setTimeout(async () => {
-    // await emailPage.evaluate(() => {
-    //   let iframe = document.getElementById("fullmessage");
-    //   let doc = iframe.contentDocument;
-    //   let ele = doc.querySelector("you-selector");
-    //   const links = doc. page.$$("a");
-    // });
-    const iframe = emailPage
-      .frames()
-      .find((frame) => frame.name().includes("Verify Email"));
-    findByLink(iframe, "Verify Email");
-  }, 5000);
-  console.log("Ran 2");
+  axios
+    .request(options)
+    .then(function (response) {
+      console.log(response.data);
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
 
   /*const aTags = await emailPage.$$("a");
   for (const aTag of aTags) {
@@ -73,33 +67,3 @@ import puppeteer from "puppeteer";
 
   //await browser.close();
 })();
-
-// Normalizing the text
-function getText(linkText) {
-  linkText = linkText.replace(/\r\n|\r/g, "\n");
-  linkText = linkText.replace(/\ +/g, " ");
-
-  // Replace &nbsp; with a space
-  var nbspPattern = new RegExp(String.fromCharCode(160), "g");
-  return linkText.replace(nbspPattern, " ");
-}
-
-// find the link, by going over all links on the page
-async function findByLink(page, linkString) {
-  const links = await page.$$("a");
-  for (var i = 0; i < links.length; i++) {
-    let valueHandle = await links[i].getProperty("innerText");
-    let linkText = await valueHandle.jsonValue();
-    console.log(linkText);
-    const text = getText(linkText);
-    if (linkString == text) {
-      console.log(linkString);
-      console.log(text);
-      console.log("Found");
-      links[i].click();
-      return links[i];
-    }
-  }
-  console.log("Could not Find");
-  return null;
-}
