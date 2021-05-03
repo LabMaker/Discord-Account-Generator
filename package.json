@@ -10,7 +10,10 @@
   "author": "Dan",
   "license": "ISC",
   "dependencies": {
+    "2captcha": "^2.1.5-3",
     "axios": "^0.21.1",
-    "puppeteer": "^9.0.0"
+    "puppeteer": "^9.1.0",
+    "puppeteer-extra": "^3.1.18",
+    "puppeteer-extra-plugin-recaptcha": "^3.3.10"
   }
 }
