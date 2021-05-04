@@ -12,7 +12,7 @@ puppeteer.use(
 (async () => {
   const browser = await puppeteer.launch({
     headless: false,
-    args: ["--proxy-server=http://37.35.41.169:8515"],
+    args: ["--proxy-server=http://109.207.130.121:8128"],
   });
   const context = await browser.createIncognitoBrowserContext();
 
@@ -145,8 +145,8 @@ puppeteer.use(
           setTimeout(async () => {
             await veriifyPage.solveRecaptchas();
             await Promise.all([veriifyPage.waitForNavigation()]);
+            await discordPage.goto("https://discord.gg/25nSAPch");
           }, 5000);
-
           emailPage.off("response", emailResponseHandler);
         } else {
           console.log("Link Not Available");
