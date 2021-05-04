@@ -2,10 +2,10 @@ import puppeteer from "puppeteer-extra";
 import RecaptchaPlugin from "puppeteer-extra-plugin-recaptcha";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 puppeteer.use(
-  RecaptchaPlugin({
-    provider: { id: "2captcha", token: "42bdee5c3b9b711ec70d4f8b886a88c3" },
-    visualFeedback: true, // colorize reCAPTCHAs (violet = detected, green = solved)
-  }),
+  // RecaptchaPlugin({
+  //   provider: { id: "2captcha", token: "42bdee5c3b9b711ec70d4f8b886a88c3" },
+  //   visualFeedback: true, // colorize reCAPTCHAs (violet = detected, green = solved)
+  // }),
   StealthPlugin()
 );
 
@@ -69,10 +69,10 @@ puppeteer.use(
   await discordPage.click(checkBoxSelector);
   await discordPage.click(submitbutton);
 
-  setTimeout(async () => {
-    await discordPage.solveRecaptchas();
-    await Promise.all([discordPage.waitForNavigation()]);
-  }, 5000);
+  // setTimeout(async () => {
+  //   await discordPage.solveRecaptchas();
+  //   await Promise.all([discordPage.waitForNavigation()]);
+  // }, 5000);
 
   //await discordPage.type(".css-1hwfws3", "12");
 
