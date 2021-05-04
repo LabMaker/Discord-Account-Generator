@@ -1,11 +1,12 @@
 import puppeteer from "puppeteer-extra";
 import RecaptchaPlugin from "puppeteer-extra-plugin-recaptcha";
-
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
 puppeteer.use(
   RecaptchaPlugin({
     provider: { id: "2captcha", token: "42bdee5c3b9b711ec70d4f8b886a88c3" },
     visualFeedback: true, // colorize reCAPTCHAs (violet = detected, green = solved)
-  })
+  }),
+  StealthPlugin()
 );
 
 (async () => {
@@ -13,27 +14,37 @@ puppeteer.use(
     headless: false,
     //args: ["--proxy-server=http://45.136.231.64:7120"],
   });
-
   const context = await browser.createIncognitoBrowserContext();
-  const emailPage = await context.newPage();
-  const discordPage = await context.newPage();
+
   //  const RecaptchaPlugin = require("");
 
-  await emailPage.goto("https://temp-mail.org", { waitUntil: "networkidle0" });
+  const emailPage = await context.newPage();
+  const discordPage = await context.newPage();
+  console.log("/.///..");
 
-  console.log("Testies 544442342134");
+  await emailPage.goto("https://mail.tm/en/", {
+    waitUntil: "domcontentloaded",
+  });
 
-  const cookies = await emailPage.cookies();
-  const emailCookie = cookies.filter((e) => e.name == "email")[0];
-  const email = decodeURIComponent(emailCookie.value);
+  // setTimeout(async () => {
+  //   console.log("Doing Captcha");
+  //   await emailPage.solveRecaptchas();
+  //   await Promise.all([emailPage.waitForNavigation()]);
+  // }, 5000);
 
-  console.log(email);
+  //const cookies = await emailPage.cookies();
+  //const emailCookie = cookies.filter((e) => e.name == "address")[0];
+  let email = "";
+  while (!email.includes("@")) {
+    const localStorage = await emailPage.evaluate(() =>
+      localStorage.getItem("vuex")
+    );
+    var t = localStorage.substring(localStorage.indexOf("address") + 10);
+    email = t.substr(0, t.indexOf(",") - 1);
+  }
 
-  // setInterval(() => {
-  //   await emailPage.click("#click-to-refresh");
-  //   await emailPage.waitForNavigation({ waitUntil: "networkidle0" });
-
-  // }, 1000);
+  console.log("emmail", email);
+  //const email = decodeURIComponent(emailCookie.value);
 
   await discordPage.goto("https://discord.com/register");
 
@@ -57,6 +68,11 @@ puppeteer.use(
   await discordPage.keyboard.type("1995");
   await discordPage.click(checkBoxSelector);
   await discordPage.click(submitbutton);
+
+  setTimeout(async () => {
+    await discordPage.solveRecaptchas();
+    await Promise.all([discordPage.waitForNavigation()]);
+  }, 5000);
 
   //await discordPage.type(".css-1hwfws3", "12");
 
@@ -90,44 +106,5 @@ puppeteer.use(
     }
   };
   emailPage.on("response", emailResponseHandler);
-  // //await browser.close();
+  // await browser.close();
 })();
-
-function timeout(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function sleep(fn, ...args) {
-  await timeout(3000);
-  return fn(...args);
-}
-
-// // Normalizing the text
-// function getText(linkText) {
-//   linkText = linkText.replace(/\r\n|\r/g, "\n");
-//   linkText = linkText.replace(/\ +/g, " ");
-
-//   // Replace &nbsp; with a space
-//   var nbspPattern = new RegExp(String.fromCharCode(160), "g");
-//   return linkText.replace(nbspPattern, " ");
-// }
-
-// // find the link, by going over all links on the page
-// async function findByLink(page, linkString) {
-//   const links = await page.$$("a");
-//   for (var i = 0; i < links.length; i++) {
-//     let valueHandle = await links[i].getProperty("innerText");
-//     let linkText = await valueHandle.jsonValue();
-//     console.log(linkText);
-//     const text = getText(linkText);
-//     if (linkString == text) {
-//       console.log(linkString);
-//       console.log(text);
-//       console.log("Found");
-//       links[i].click();
-//       return links[i];
-//     }
-//   }
-//   console.log("Could not Find");
-//   return null;
-// }
